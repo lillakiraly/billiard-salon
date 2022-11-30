@@ -1,0 +1,74 @@
+@startuml
+class BilliardSalon {
+- income: BigDecimal
+- tables: List<Table>
++ reserveTable(Class<T extends Table>): void
++ getAllAvailableTablesByType(Class<T extends Table>): List<Table>
++ getTableWithHighestTotal(): Table
+}
+abstract class Table {
+- hourlyPricing: BigDecimal
+# startTime: LocalDateTime
+# isReserved: boolean
+- orders: List<MenuItem>
++ orderMenuItem(MenuItem): void
++ payForTable(): BigDecimal
++ payForMenuItem(UUID): BigDecimal
++ {abstract} reserveTable(): void
+- getRoundedUpHourFromSecond(Duration): int
++ getTotalUnpaidConsumption(): BigDecimal
+}
+class Pool extends Table {
+- {static} HOURLY_PRICING: BigDecimal
++ reserveTable(): void
+}
+abstract class TableAfter6 extends Table {
++ reserveTable(): void
+}
+class Snooker extends TableAfter6 {
+- {static} HOURLY_PRICING: BigDecimal
+}
+class Rex extends TableAfter6 {
+- {static} HOURLY_PRICING: BigDecimal
+}
+class MenuItem {
+- id: UUID
+- name: String
+- price: BigDecimal
+- type: MenuItemType
+}
+enum MenuItemType{
+FOOD,
+BEVERAGE;
+}
+
+BilliardSalon *-- Table
+Table *- MenuItem
+MenuItem -- MenuItemType
+
+@enduml
+
+An owner of a billiard salon reached us to create their billiard table reservation system.
+
+They have several types of tables with different hourly pricing:
+Pool: 1200
+Snooker: 1600
+Rex: 800
+When a customer arrives at the salon, they can reserve a free table at the reservation desk with
+the help of the staff through our application.
+
+Customers can order beverages and food for the receipt of the table and
+they can be paid by the players when they leave (orders can be checked and
+elements can be paid one by one).
+
+Drinks and food have their price, type (food / beverage) and name.
+
+Snooker and Rex tables can be reserved only after 6 pm, based on the government regulations.
+
+The reservation price of the billiard is calculated at the end of the reservation
+when the customer asks us to stop it.
+
+Make it possible for the receptionist to get all the available tables by type,
+and search for the table with the highest total unpaid consumption from the reserved ones.
+
+Egy osztály adatait szeretnénk e tárolni a másik osztályon kívül az alkalmazásban
